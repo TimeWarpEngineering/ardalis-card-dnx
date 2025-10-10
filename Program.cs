@@ -23,14 +23,14 @@ public class CardCommand : Command
 {
     public override int Execute(CommandContext context)
     {
-        // Top gradient rule
-        var top = new Rule("[gradient(deepskyblue3,mediumorchid1)]────────────────────────────────────────[/]")
+        // Top rule with standard color
+        var top = new Rule("[deepskyblue3]────────────────────────────────────────[/]")
         {
             Justification = Justify.Center
         };
         AnsiConsole.Write(top);
 
-        // Main panel
+        // Card content
         var panelContent = new Markup(
             "[bold mediumorchid1]Steve 'Ardalis' Smith[/]\n" +
             "[grey]Software Architect & Trainer[/]\n\n" +
@@ -39,23 +39,23 @@ public class CardCommand : Command
             "[italic grey]Clean Architecture • DDD • .NET[/]"
         );
 
+        // Panel with purple border, not full-width
         var panel = new Panel(panelContent)
         {
             Border = BoxBorder.Rounded,
             BorderStyle = new Style(Color.MediumOrchid1),
             Padding = new Padding(2, 1, 2, 1),
+            Expand = false
         };
 
-        // Set header + center alignment on the header object
-        panel.Header = new PanelHeader("[bold deepskyblue3]💠 Ardalis[/]")
-        {
-            Alignment = Justify.Center
-        };
+        // Simple header (no alignment property on some Spectre versions)
+        panel.Header = new PanelHeader("[bold deepskyblue3]💠 Ardalis[/]");
 
+        // Center the whole panel (Spectre.Console centers non-expanded panels by default)
         AnsiConsole.Write(panel);
 
-        // Bottom gradient rule
-        var bottom = new Rule("[gradient(mediumorchid1,deepskyblue3)]────────────────────────────────────────[/]")
+        // Bottom rule with standard color
+        var bottom = new Rule("[mediumorchid1]────────────────────────────────────────[/]")
         {
             Justification = Justify.Center
         };
@@ -66,7 +66,6 @@ public class CardCommand : Command
         return 0;
     }
 }
-
 
 public class BlogCommand : Command
 {
