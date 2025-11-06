@@ -8,36 +8,34 @@ This project uses GitHub Actions to automatically publish to NuGet.org when a ne
 
 #### Steps to Publish
 
-1. **Update the version** in `ardalis.csproj`:
+1. **Update the version and release notes** in `ardalis.csproj`:
 
    ```xml
-   <Version>1.0.3</Version>
+   <Version>1.3.0</Version>
+   <ReleaseNotes>Added 'repos' command - Display popular GitHub repositories.</ReleaseNotes>
    ```
 
-2. **Commit and push** your changes:
+2. **Update the README.md** if needed to document new features.
+
+3. **Commit and push** your changes:
 
    ```bash
    git add .
-   git commit -m "Bump version to 1.0.3"
+   git commit -m "Bump version to 1.3.0"
    git push origin main
-   ```
-
-3. **Create and push a git tag**:
-
-   ```bash
-   git tag v1.0.3
-   git push origin v1.0.3
    ```
 
 4. **Create a GitHub Release**:
    - Go to [GitHub Releases](https://github.com/ardalis/ardalis-card-dnx/releases/new)
-   - Select the tag you just created (`v1.0.3`)
+   - Create a **new tag** (e.g., `v1.3.0`) directly in the release form
    - Add release notes describing the changes
    - Click **Publish release**
 
 5. **Monitor the workflow**:
-   - The GitHub Action will automatically build and publish to NuGet.org
+   - The GitHub Action will automatically trigger and publish to NuGet.org
    - Check progress at [GitHub Actions](https://github.com/ardalis/ardalis-card-dnx/actions)
+
+**Note**: Creating the release will automatically create the tag, so you don't need to create and push tags separately. This prevents duplicate workflow runs.
 
 #### Manual Publishing (Alternative)
 
