@@ -1,5 +1,8 @@
 # ardalis-card-dnx
 
+[![NuGet](https://img.shields.io/nuget/v/ardalis.svg)](https://www.nuget.org/packages/ardalis)
+[![NuGet Downloads](https://img.shields.io/nuget/dt/ardalis.svg)](https://www.nuget.org/packages/ardalis)
+
 A .NET global tool that displays a personal business card in your terminal. 💠
 
 ## Overview
