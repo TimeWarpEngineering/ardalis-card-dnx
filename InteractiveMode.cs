@@ -10,8 +10,8 @@ public static class InteractiveMode
     public static async Task<int> RunAsync()
     {
         AnsiConsole.MarkupLine("[bold deepskyblue3]Interactive Mode[/]");
-        AnsiConsole.MarkupLine("[dim]Enter commands (card, blog, youtube, contact, quote, repos, books, tips, courses, speaker). Press Ctrl+C or type 'exit' to quit.[/]\n");
-
+        AnsiConsole.MarkupLine("[dim]Enter commands (card, blog, youtube, contact, quote, repos, books, tips, courses, speaker, recent). Press Ctrl+C or type 'exit' to quit.[/]\n");
+        
         while (true)
         {
             var input = AnsiConsole.Prompt(
@@ -74,6 +74,9 @@ public static class InteractiveMode
                     case "speaker":
                         new SpeakerCommand().Execute(null!);
                         break;
+                    case "recent":
+                        await new RecentCommand().ExecuteAsync(null!);
+                        break;
                     
                     case "help":
                     case "?":
@@ -88,6 +91,7 @@ public static class InteractiveMode
                         AnsiConsole.MarkupLine("  [deepskyblue3]tips[/]    - Display a random coding tip");
                         AnsiConsole.MarkupLine("  [deepskyblue3]courses[/] - Display available courses");
                         AnsiConsole.MarkupLine("  [deepskyblue3]speaker[/] - Open Sessionize speaker profile");
+                        AnsiConsole.MarkupLine("  [deepskyblue3]recent[/]  - Display recent activity");
                         AnsiConsole.MarkupLine("  [deepskyblue3]exit[/]    - Exit interactive mode");
                         break;
                     
