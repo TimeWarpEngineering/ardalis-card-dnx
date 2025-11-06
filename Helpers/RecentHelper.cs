@@ -150,7 +150,7 @@ public static class RecentHelper
                 .Take(5)
                 .Select(item => new RecentActivity
                 {
-                    Title = item.Element(ns + "title")?.Value ?? "Untitled",
+                    Title = item.Element(ns + "description")?.Value ?? "Untitled",
                     Url = item.Element(ns + "link")?.Value ?? "https://bsky.app/profile/ardalis.com",
                     Date = ParseDate(item.Element(ns + "pubDate")?.Value),
                     Source = "Bluesky",
@@ -200,6 +200,34 @@ public static class RecentHelper
                 return Title;
             
             return Title[..(maxWidth - 3)] + "...";
+        }
+
+        public string GetRelativeTimeString()
+        {
+            var now = DateTime.UtcNow;
+            var activityDate = Date.Kind == DateTimeKind.Utc ? Date : Date.ToUniversalTime();
+            var timeSpan = now - activityDate;
+
+            // If more than 2 days old, use short date format
+            if (timeSpan.TotalDays > 2)
+            {
+                return activityDate.ToString("d MMM yyyy");
+            }
+
+            // Otherwise use relative time
+            if (timeSpan.TotalMinutes < 1)
+                return "just now";
+            if (timeSpan.TotalMinutes < 60)
+                return $"{(int)timeSpan.TotalMinutes} min ago";
+            if (timeSpan.TotalHours < 24)
+            {
+                var hours = (int)timeSpan.TotalHours;
+                return hours == 1 ? "1 hour ago" : $"{hours} hours ago";
+            }
+            
+            // 1-2 days
+            var days = (int)timeSpan.TotalDays;
+            return days == 1 ? "1 day ago" : $"{days} days ago";
         }
     }
 }

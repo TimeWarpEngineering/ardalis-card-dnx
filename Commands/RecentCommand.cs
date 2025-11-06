@@ -27,15 +27,17 @@ public class RecentCommand : AsyncCommand
         
         table.AddColumn(new TableColumn("[bold]Source[/]").Centered());
         table.AddColumn(new TableColumn("[bold]Activity[/]").LeftAligned());
+        table.AddColumn(new TableColumn("[bold]When[/]").RightAligned());
         table.AddColumn(new TableColumn("[bold]Link[/]").Centered());
         
         foreach (var activity in activities)
         {
             var truncatedTitle = activity.GetTruncatedTitle(60);
             var sourceWithIcon = $"{activity.Icon} {activity.Source}";
+            var when = activity.GetRelativeTimeString();
             var link = $"[link={activity.Url}]Click for details[/]";
             
-            table.AddRow(sourceWithIcon, truncatedTitle, link);
+            table.AddRow(sourceWithIcon, truncatedTitle, when, link);
         }
         
         AnsiConsole.Write(table);
