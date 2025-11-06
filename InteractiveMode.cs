@@ -36,19 +36,19 @@ public static class InteractiveMode
                 switch (command)
                 {
                     case "card":
-                        CommandHandlers.ShowCard();
+                        new CardCommand().Execute(null!);
                         break;
                     
                     case "blog":
-                        CommandHandlers.OpenBlog();
+                        new BlogCommand().Execute(null!);
                         break;
                     
                     case "youtube":
-                        CommandHandlers.OpenYouTube();
+                        new YouTubeCommand().Execute(null!);
                         break;
                     
                     case "quote":
-                        await CommandHandlers.ShowQuoteAsync();
+                        await new QuoteCommand().ExecuteAsync(null!);
                         break;
                     
                     case "help":

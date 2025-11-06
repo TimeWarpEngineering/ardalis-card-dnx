@@ -1,3 +1,5 @@
+using Ardalis.Helpers;
+using Spectre.Console;
 using Spectre.Console.Cli;
 using System.Threading.Tasks;
 
@@ -7,7 +9,8 @@ public class QuoteCommand : AsyncCommand
 {
     public override async Task<int> ExecuteAsync(CommandContext context)
     {
-        await CommandHandlers.ShowQuoteAsync();
+        var quote = await QuoteHelper.GetRandomQuote();
+        AnsiConsole.WriteLine($"\"{quote}\" - Ardalis");
         return 0;
     }
 }
