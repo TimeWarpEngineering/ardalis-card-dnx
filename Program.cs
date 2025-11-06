@@ -30,6 +30,9 @@ app.Configure(config =>
     config.AddCommand<ReposCommand>("repos")
         .WithDescription("Display popular Ardalis GitHub repositories.");
 
+    config.AddCommand<PackagesCommand>("packages")
+        .WithDescription("Display popular Ardalis NuGet packages.");
+
     config.AddCommand<BooksCommand>("books")
         .WithDescription("Display published books by Ardalis.");
         
