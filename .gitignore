@@ -418,3 +418,8 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+
+# EXE and binary files
+*.exe
+*.dll
+*.pdb
