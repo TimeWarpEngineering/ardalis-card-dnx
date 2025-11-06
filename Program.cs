@@ -28,6 +28,7 @@ if (args.Length > 0 && (args[0] == "-h" || args[0] == "--help" || args[0] == "he
         config.AddCommand<BooksCommand>("books").WithDescription("Display published books by Ardalis.");
         config.AddCommand<TipsCommand>("tips").WithDescription("Display a random coding tip.");
         config.AddCommand<CoursesCommand>("courses").WithDescription("Display available courses.");
+        config.AddCommand<SpeakerCommand>("speaker").WithDescription("Open Ardalis's Sessionize speaker profile.");
         config.AddCommand<RecentCommand>("recent").WithDescription("Display recent activity from Ardalis.");
         
         config.AddExample("card");
@@ -88,6 +89,9 @@ app.Configure(config =>
     config.AddCommand<CoursesCommand>("courses")
         .WithDescription("Display available courses.");
 
+    config.AddCommand<SpeakerCommand>("speaker")
+        .WithDescription("Open Ardalis's Sessionize speaker profile.");
+  
     config.AddCommand<RecentCommand>("recent")
         .WithDescription("Display recent activity from Ardalis.");
         
