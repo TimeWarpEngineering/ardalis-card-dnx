@@ -14,8 +14,8 @@
     <PackageTags>dotnet-tool;cli;business-card;dnx</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <Version>1.6.1</Version>
-    <ReleaseNotes>Added installation instructions to help output showing how to install as a global tool with 'dotnet tool install -g ardalis'.</ReleaseNotes>
+    <Version>1.7.0</Version>
+    <ReleaseNotes>Added 'tips' command to display random coding tips and 'courses' command to show available courses. Both commands fetch data dynamically with fallback support.</ReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
