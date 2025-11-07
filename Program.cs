@@ -26,15 +26,19 @@ if (args.Length > 0 && (args[0] == "-v" || args[0] == "--version" || args[0] == 
         {
             var latestVersion = versionData.Versions[^1]; // Get last version (latest)
             
-            // Simple version comparison - trim trailing .0s
-            var currentVersionNormalized = currentVersion.TrimEnd('0').TrimEnd('.');
-            var latestVersionNormalized = latestVersion.TrimEnd('0').TrimEnd('.');
+            // Parse versions for comparison
+            var current = System.Version.Parse(currentVersion);
+            var latest = System.Version.Parse(latestVersion);
             
-            if (latestVersionNormalized != currentVersionNormalized)
+            AnsiConsole.WriteLine();
+            if (latest > current)
             {
-                AnsiConsole.WriteLine();
                 AnsiConsole.MarkupLine($"[yellow]v{latestVersion} is available; upgrade with:[/]");
                 AnsiConsole.MarkupLine($"[cyan]dotnet tool update -g ardalis[/]");
+            }
+            else
+            {
+                AnsiConsole.MarkupLine("[green]You are on the latest version.[/]");
             }
         }
     }
@@ -153,4 +157,4 @@ app.Configure(config =>
 return app.Run(args);
 
 // Data class for NuGet version response
-record NuGetVersionData(string[] Versions);
+record NuGetVersionData([property: System.Text.Json.Serialization.JsonPropertyName("versions")] string[] Versions);
