@@ -1,4 +1,5 @@
-﻿using Ardalis;
+﻿using System;
+using Ardalis;
 using Ardalis.Commands;
 using Spectre.Console;
 using Spectre.Console.Cli;
@@ -42,9 +43,10 @@ if (args.Length > 0 && (args[0] == "-v" || args[0] == "--version" || args[0] == 
             }
         }
     }
-    catch
+    catch (Exception ex)
     {
-        // Silently ignore if we can't check for updates
+        // TODO: Use logging and telemetry to report errors
+        AnsiConsole.MarkupLine($"[red]Unable to check for updates: {ex.Message}[/]");
     }
     
     return 0;
