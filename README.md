@@ -45,6 +45,12 @@ Open Ardalis's YouTube channel:
 dnx ardalis youtube
 ```
 
+Open Ardalis's Pluralsight profile:
+
+```bash
+dnx ardalis pluralsight
+```
+
 Display a random quote:
 
 ```bash
@@ -165,6 +171,7 @@ ardalis            # Show help
 ardalis card       # Display business card
 ardalis blog       # Open blog
 ardalis youtube    # Open YouTube channel
+ardalis pluralsight # Open Pluralsight profile
 ardalis quote      # Display random quote
 ardalis repos      # Display popular GitHub repositories
 ardalis packages   # Display popular NuGet packages
