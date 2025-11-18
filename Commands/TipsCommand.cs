@@ -11,11 +11,11 @@ public class TipsCommand : AsyncCommand
     public override async Task<int> ExecuteAsync(CommandContext context, CancellationToken cancellationToken = default)
     {
         var tip = await TipHelper.GetRandomTip();
-        
+
         // Add UTM tracking to the URL but display without query string
         var urlWithTracking = UrlHelper.AddUtmSource(tip.ReferenceLink);
         var displayUrl = UrlHelper.StripQueryString(tip.ReferenceLink);
-        
+
         var panel = new Panel(new Markup(
             $"[bold yellow]💡 Coding Tip[/]\n\n" +
             $"{tip.TipText}\n\n" +
@@ -28,7 +28,7 @@ public class TipsCommand : AsyncCommand
         };
 
         AnsiConsole.Write(panel);
-        
+
         return 0;
     }
 }

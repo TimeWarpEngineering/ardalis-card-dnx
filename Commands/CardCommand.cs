@@ -22,7 +22,7 @@ public class CardCommand : Command
         var blueskyUrl = UrlHelper.AddUtmSource("https://bsky.app/profile/ardalis.com");
         var linkedinUrl = UrlHelper.AddUtmSource("https://www.linkedin.com/in/stevenandrewsmith/");
         var sessionizeUrl = UrlHelper.AddUtmSource("https://sessionize.com/ardalis");
-        
+
         var panelContent = new Markup(
             "[bold mediumorchid1]Steve 'Ardalis' Smith[/]\n" +
             "[grey]Software Architect, Speaker, and Trainer[/]\n\n" +

@@ -31,7 +31,7 @@ public class CoursesCommand : AsyncCommand
         AnsiConsole.MarkupLine("[bold green]Ardalis's Available Courses[/]\n");
 
         List<Course> courses;
-        
+
         try
         {
             // Try to fetch courses from the URL
@@ -108,7 +108,7 @@ public class CoursesCommand : AsyncCommand
     {
         var urlWithTracking = UrlHelper.AddUtmSource(course.Link);
         var displayUrl = UrlHelper.StripQueryString(course.Link);
-        
+
         var panel = new Panel(new Markup(
             $"[bold]{course.Name}[/]\n\n" +
             $"{(string.IsNullOrEmpty(course.Description) ? "[dim]No description available[/]" : course.Description)}\n\n" +

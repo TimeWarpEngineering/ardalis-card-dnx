@@ -40,7 +40,7 @@ public static class UrlHelper
     {
         // Add UTM source for tracking
         var urlWithTracking = AddUtmSource(url);
-        
+
         // Display URL without query parameters for cleaner output
         var displayUrl = StripQueryString(url);
         AnsiConsole.MarkupLine($"Opening [link={urlWithTracking}]{displayUrl}[/]");

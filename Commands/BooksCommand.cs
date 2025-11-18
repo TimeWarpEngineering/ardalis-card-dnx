@@ -40,7 +40,7 @@ public class BooksCommand : AsyncCommand<BooksCommand.Settings>
         AnsiConsole.MarkupLine("[bold blue]Ardalis's Published Books[/]\n");
 
         List<Book> books;
-        
+
         try
         {
             // Try to fetch books from the URL
@@ -125,7 +125,7 @@ public class BooksCommand : AsyncCommand<BooksCommand.Settings>
 
         var urlWithTracking = UrlHelper.AddUtmSource(book.Link);
         var displayUrl = UrlHelper.StripQueryString(book.Link);
-        
+
         var panel = new Panel(new Markup(
             $"[bold]{book.Title}[/]\n\n" +
             $"{(string.IsNullOrEmpty(book.Description) ? "[dim]No description available[/]" : book.Description)}\n\n" +

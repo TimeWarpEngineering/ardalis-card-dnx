@@ -64,7 +64,7 @@ public class PackagesCommand : AsyncCommand<PackagesCommand.Settings>
             {
                 var downloads = package.TotalDownloads.ToString("N0");
                 var description = package.Description;
-                
+
                 // Truncate description if too long
                 if (description.Length > 50)
                 {
@@ -94,12 +94,12 @@ public class PackagesCommand : AsyncCommand<PackagesCommand.Settings>
 
         AnsiConsole.Write(table);
         AnsiConsole.WriteLine();
-        
+
         if (!settings.ShowAll)
         {
             AnsiConsole.MarkupLine("[dim]Showing top 10 main packages. Use [bold]--all[/] to see all packages.[/]");
         }
-        
+
         AnsiConsole.MarkupLine("[dim]Visit: [link]https://www.nuget.org/profiles/ardalis[/][/]");
 
         return 0;
