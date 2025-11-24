@@ -119,6 +119,36 @@ dnx ardalis courses --no-paging
 dnx ardalis courses --page-size 5
 ```
 
+Display top videos from .NET Conf playlists:
+
+```bash
+dnx ardalis dotnetconf-score 2025
+# or other years: 2024, 2023, 2022, 2021
+dnx ardalis dotnetconf-score 2024
+```
+
+**Note:** The `dotnetconf-score` command requires a YouTube Data API v3 key. Set the `YOUTUBE_API_KEY` environment variable:
+
+```bash
+# Windows (PowerShell)
+$env:YOUTUBE_API_KEY = "your-api-key-here"
+
+# Windows (Command Prompt)
+set YOUTUBE_API_KEY=your-api-key-here
+
+# macOS/Linux
+export YOUTUBE_API_KEY=your-api-key-here
+```
+
+To get an API key:
+
+1. Go to [Google Cloud Console](https://console.cloud.google.com/apis/credentials)
+2. Create a project (if needed)
+3. Enable [YouTube Data API v3](https://console.cloud.google.com/apis/library/youtube.googleapis.com)
+4. Create credentials (API key)
+
+> **Future Enhancement:** This command currently requires users to provide their own YouTube API key. A better approach would be to use a dedicated service endpoint that handles third-party API interactions, removing the need for individual users to manage API keys and quotas.
+
 Open NimblePros website:
 
 ```bash
@@ -211,6 +241,7 @@ ardalis books      # Display published books
 ardalis books --with-covers  # Display published books with cover images
 ardalis courses    # Display available courses
 ardalis courses --no-paging  # Display all courses at once
+ardalis dotnetconf-score 2025  # Display top .NET Conf videos by views
 ardalis nimblepros # Open NimblePros website
 ardalis --version  # Check version
 ```
