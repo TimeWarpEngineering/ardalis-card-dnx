@@ -81,7 +81,7 @@ public class ArdalisApiClient : IDisposable
 
     var playlistId = ExtractPlaylistId(playlistIdOrUrl);
 
-    var request = new HttpRequestMessage(HttpMethod.Get, $"/youtube/playlists/{Uri.EscapeDataString(playlistId)}/stats");
+    using var request = new HttpRequestMessage(HttpMethod.Get, $"/youtube/playlists/{Uri.EscapeDataString(playlistId)}/stats");
     
     if (!string.IsNullOrWhiteSpace(youtubeApiKeyOverride))
     {
