@@ -76,7 +76,6 @@ public class ArdalisApiClient : IDisposable
     string? youtubeApiKeyOverride = null,
     CancellationToken cancellationToken = default)
   {
-        Console.WriteLine("GetPlaylistStatsAsync called with playlistIdOrUrl: " + playlistIdOrUrl);
     if (string.IsNullOrWhiteSpace(playlistIdOrUrl))
       throw new ArgumentException("Playlist ID or URL cannot be null or empty", nameof(playlistIdOrUrl));
 
