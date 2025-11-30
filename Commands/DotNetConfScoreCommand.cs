@@ -203,44 +203,4 @@ public class DotNetConfScoreCommand : AsyncCommand<DotNetConfScoreCommand.Settin
     }
 
     private class YouTubePlaylistItem
-    {
-        [JsonPropertyName("contentDetails")]
-        public ContentDetails ContentDetails { get; set; } = new();
-    }
-
-    private class ContentDetails
-    {
-        [JsonPropertyName("videoId")]
-        public string VideoId { get; set; } = string.Empty;
-    }
-
-    private class YouTubeVideosResponse
-    {
-        [JsonPropertyName("items")]
-        public List<YouTubeVideo> Items { get; set; } = new();
-    }
-
-    private class YouTubeVideo
-    {
-        [JsonPropertyName("id")]
-        public string Id { get; set; } = string.Empty;
-
-        [JsonPropertyName("snippet")]
-        public VideoSnippet Snippet { get; set; } = new();
-
-        [JsonPropertyName("statistics")]
-        public VideoStatistics Statistics { get; set; } = new();
-    }
-
-    private class VideoSnippet
-    {
-        [JsonPropertyName("title")]
-        public string Title { get; set; } = string.Empty;
-    }
-
-    private class VideoStatistics
-    {
-        [JsonPropertyName("viewCount")]
-        public string ViewCount { get; set; } = "0";
-    }
 }
