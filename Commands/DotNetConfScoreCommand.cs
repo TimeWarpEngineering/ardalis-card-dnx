@@ -191,16 +191,4 @@ public class DotNetConfScoreCommand : AsyncCommand<DotNetConfScoreCommand.Settin
         [JsonPropertyName("url")]
         public string Url { get; set; } = string.Empty;
     }
-
-    // JSON models for YouTube API
-    private class YouTubePlaylistResponse
-    {
-        [JsonPropertyName("items")]
-        public List<YouTubePlaylistItem> Items { get; set; } = new();
-
-        [JsonPropertyName("nextPageToken")]
-        public string NextPageToken { get; set; }
-    }
-
-    private class YouTubePlaylistItem
 }
