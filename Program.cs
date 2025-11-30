@@ -108,6 +108,7 @@ public class Program
         builder.Services.AddTransient<ContactCommand>();
         builder.Services.AddTransient<CoursesCommand>();
         builder.Services.AddTransient<DometrainCommand>();
+        builder.Services.AddTransient<DotNetConfScoreCommand>();
         builder.Services.AddTransient<LinkedInCommand>();
         builder.Services.AddTransient<NimbleProCommand>();
         builder.Services.AddTransient<PackagesCommand>();
@@ -200,6 +201,7 @@ public class Program
                 config.AddCommand<BooksCommand>("books").WithDescription("Display published books by Ardalis.");
                 config.AddCommand<CardCommand>("card").WithDescription("Display Ardalis's business card.");
                 config.AddCommand<CoursesCommand>("courses").WithDescription("Display available courses.");
+                config.AddCommand<DotNetConfScoreCommand>("dotnetconf-score").WithDescription("Display top videos from .NET Conf playlists.");
                 config.AddCommand<PackagesCommand>("packages").WithDescription("Display popular Ardalis NuGet packages.");
                 config.AddCommand<QuoteCommand>("quote").WithDescription("Display a random Ardalis quote.");
                 config.AddCommand<RecentCommand>("recent").WithDescription("Display recent activity from Ardalis.");
@@ -256,6 +258,9 @@ public class Program
 
             config.AddCommand<CoursesCommand>("courses")
                 .WithDescription("Display available courses.");
+
+            config.AddCommand<DotNetConfScoreCommand>("dotnetconf-score")
+                .WithDescription("Display top videos from .NET Conf playlists.");
 
             config.AddCommand<PackagesCommand>("packages")
                 .WithDescription("Display popular Ardalis NuGet packages.");

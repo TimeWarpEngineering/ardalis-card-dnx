@@ -14,7 +14,8 @@ public static class InteractiveMode
         var postHog = services.GetRequiredService<PostHogService>();
 
         AnsiConsole.MarkupLine("[bold deepskyblue3]Interactive Mode[/]");
-        AnsiConsole.MarkupLine("[dim]Enter commands (blog, bluesky, books, card, contact, courses, dometrain, linkedin, nimblepros, packages, pluralsight, quote, recent, repos, speaker, subscribe, tips, youtube). Press Ctrl+C or type 'exit' to quit.[/]\n");
+        AnsiConsole.MarkupLine("[dim]Enter commands (blog, bluesky, books, card, contact, courses, dometrain, linkedin, nimblepros, packages, pluralsight, quote, recent, repos, speaker, subscribe, tips, youtube). Press Ctrl+C or type 'exit' to quit.[/]");
+        AnsiConsole.MarkupLine("[dim]Note: Some commands like 'dotnetconf-score' require arguments and must be run from the command line.[/]\n");
 
         while (true)
         {
@@ -136,6 +137,9 @@ public static class InteractiveMode
                         AnsiConsole.MarkupLine("  [deepskyblue3]speaker[/] - Open Sessionize speaker profile");
                         AnsiConsole.MarkupLine("  [deepskyblue3]subscribe[/] - Open newsletter subscription page");
                         AnsiConsole.MarkupLine("  [deepskyblue3]youtube[/] - Open YouTube channel");
+                        AnsiConsole.WriteLine();
+                        AnsiConsole.MarkupLine("[bold]Commands Requiring Arguments (use from command line):[/]");
+                        AnsiConsole.MarkupLine("  [deepskyblue3]dotnetconf-score <year>[/] - Display top .NET Conf videos");
                         AnsiConsole.WriteLine();
                         AnsiConsole.MarkupLine("  [deepskyblue3]exit[/]    - Exit interactive mode");
                         break;
