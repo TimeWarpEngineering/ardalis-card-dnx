@@ -1,7 +1,7 @@
-using Spectre.Console;
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using TimeWarp.Nuru;
 
 namespace Ardalis.Helpers;
 
@@ -38,26 +38,28 @@ public static class UrlHelper
 
     public static void Open(string url)
     {
+        ITerminal terminal = NuruTerminal.Default;
+
         // Add UTM source for tracking
-        var urlWithTracking = AddUtmSource(url);
+        string urlWithTracking = AddUtmSource(url);
 
         // Display URL without query parameters for cleaner output
-        var displayUrl = StripQueryString(url);
-        AnsiConsole.MarkupLine($"Opening [link={urlWithTracking}]{displayUrl}[/]");
+        string displayUrl = StripQueryString(url);
+        terminal.WriteLine("Opening " + displayUrl.Link(urlWithTracking));
 
         try
         {
-            var opened = TryOpenUrl(urlWithTracking);
+            bool opened = TryOpenUrl(urlWithTracking);
             if (!opened)
             {
                 // Fallback: display the URL as a clickable link
-                AnsiConsole.MarkupLine($"[dim]Open in your browser:[/] [link={urlWithTracking}]{displayUrl}[/]");
+                terminal.WriteLine("Open in your browser: ".Gray() + displayUrl.Link(urlWithTracking).Cyan());
             }
         }
         catch
         {
-            AnsiConsole.MarkupLine($"[yellow]Could not open browser automatically.[/]");
-            AnsiConsole.MarkupLine($"[dim]Please visit:[/] [link={urlWithTracking}]{displayUrl}[/]");
+            terminal.WriteLine("Could not open browser automatically.".Yellow());
+            terminal.WriteLine("Please visit: ".Gray() + displayUrl.Link(urlWithTracking).Cyan());
         }
     }
 
