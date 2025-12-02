@@ -1,0 +1,36 @@
+# Migrate UrlHelper to Nuru
+
+## Summary
+
+Update UrlHelper to use `NuruTerminal.Default` instead of Spectre.Console for terminal output.
+
+## Todo List
+
+- [ ] Replace `using Spectre.Console;` with `using TimeWarp.Nuru;`
+- [ ] Replace `AnsiConsole.MarkupLine()` calls with `terminal.WriteLine()`
+- [ ] Use Nuru string extensions (`.Cyan()`, `.Yellow()`, `.Link()`)
+- [ ] Update `Open()` method to use `NuruTerminal.Default`
+- [ ] Verify `dotnet build` succeeds
+- [ ] Verify URL opening still works correctly
+
+## Notes
+
+This is Phase 6 of the TimeWarp.Nuru migration.
+
+UrlHelper methods to update:
+- `Open()` - Main method that outputs to terminal
+
+Keep unchanged:
+- `StripQueryString()` - Pure string manipulation
+- `AddUtmSource()` - Pure string manipulation
+- `TryOpenUrl()` - Process launching, no terminal output
+- `TryStartProcess()` - Process launching
+- `IsWsl()` - Environment detection
+
+File to modify:
+- `Helpers/UrlHelper.cs`
+
+Reference: `.agent/workspace/2025-12-02T16-30-00_timewarp-nuru-migration-plan.md` - Phase 6
+
+## Results
+
