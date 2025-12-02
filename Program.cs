@@ -1,332 +1,161 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
+using System;
+using System.Net.Http;
 using System.Threading.Tasks;
-using Ardalis;
-using Ardalis.Cli.Infrastructure;
+using Ardalis.Cli.Handlers;
 using Ardalis.Cli.Telemetry;
-using Ardalis.Commands;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using OpenTelemetry;
-using OpenTelemetry.Resources;
-using OpenTelemetry.Trace;
-using Spectre.Console;
-using Spectre.Console.Cli;
+using TimeWarp.Nuru;
+using static Ardalis.Cli.Urls;
+using static Ardalis.Helpers.UrlHelper;
 
 namespace Ardalis.Cli;
 
 public class Program
 {
-    private static IHost BuildApplicationAsync(string[] args)
-    {
-        // Check for interactive mode
-        bool interactive = args.Length > 0 && (args[0] == "-i" || args[0] == "--interactive");
-
-
-        var settings = new HostApplicationBuilderSettings
-        {
-            Configuration = new ConfigurationManager()
-        };
-        settings.Configuration.AddEnvironmentVariables();
-
-#if DEBUG
-        // Add in-memory configuration for debugging
-        settings.Configuration.AddInMemoryCollection(new Dictionary<string, string>
-        {
-            ["DetailedErrors"] = "true"
-        });
-#endif
-
-        var builder = Host.CreateEmptyApplicationBuilder(settings);
-
-        // Always configure OpenTelemetry.
-        builder.Logging.AddOpenTelemetry(logging =>
-        {
-            logging.IncludeFormattedMessage = true;
-            logging.IncludeScopes = true;
-        });
-
-#if DEBUG
-        // source: aspire cli https://github.com/dotnet/aspire/blob/main/src/Aspire.Cli/Program.cs
-        var otelBuilder = builder.Services
-                    .AddOpenTelemetry()
-                    .WithTracing(tracing =>
-                    {
-                        tracing.AddSource(ArdalisCliTelemetry.ActivitySourceName);
-
-                        tracing.SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("ardalis-cli"));
-                    });
-
-        // Support both generic OTLP endpoint and PostHog-specific endpoint
-        var otlpEndpoint = builder.Configuration["OTEL_EXPORTER_OTLP_ENDPOINT"]
-                          ?? builder.Configuration["POSTHOG_OTLP_ENDPOINT"];
-
-        if (otlpEndpoint is { })
-        {
-            // NOTE: If we always enable the OTEL exporter it dramatically
-            //       impacts the CLI in terms of exiting quickly because it
-            //       has to finish sending telemetry.
-            otelBuilder.UseOtlpExporter();
-
-            // For PostHog, you'll need to set:
-            // POSTHOG_OTLP_ENDPOINT=https://us.i.posthog.com/v1/traces (or your region)
-            // OTEL_EXPORTER_OTLP_HEADERS=x-posthog-auth=<your-project-api-key>
-        }
-#endif
-
-
-        var debugMode = args?.Any(a => a == "--debug" || a == "-d") ?? false;
-
-        if (debugMode)
-        {
-            builder.Logging.AddFilter("Ardalis.Cli", LogLevel.Debug);
-            builder.Logging.AddFilter("Microsoft.Hosting.Lifetime", LogLevel.Warning); // Reduce noise from hosting lifecycle
-            builder.Logging.AddFilter("PostHog", LogLevel.Trace);
-
-            // Add simple console logging for debug mode
-            builder.Logging.AddSimpleConsole(options =>
-            {
-                options.IncludeScopes = true;
-                options.SingleLine = true;
-                options.TimestampFormat = "HH:mm:ss ";
-            });
-        }
-
-        // add services
-        builder.Services.AddSingleton<ArdalisCliTelemetry>();
-        builder.Services.AddSingleton<PostHogService>();
-
-        // Register all commands for DI
-        builder.Services.AddTransient<BlogCommand>();
-        builder.Services.AddTransient<BlueSkyCommand>();
-        builder.Services.AddTransient<BooksCommand>();
-        builder.Services.AddTransient<CardCommand>();
-        builder.Services.AddTransient<ContactCommand>();
-        builder.Services.AddTransient<CoursesCommand>();
-        builder.Services.AddTransient<DometrainCommand>();
-        builder.Services.AddTransient<DotNetConfScoreCommand>();
-        builder.Services.AddTransient<LinkedInCommand>();
-        builder.Services.AddTransient<NimbleProCommand>();
-        builder.Services.AddTransient<PackagesCommand>();
-        builder.Services.AddTransient<PluralsightCommand>();
-        builder.Services.AddTransient<QuoteCommand>();
-        builder.Services.AddTransient<RecentCommand>();
-        builder.Services.AddTransient<ReposCommand>();
-        builder.Services.AddTransient<SpeakerCommand>();
-        builder.Services.AddTransient<SubscribeCommand>();
-        builder.Services.AddTransient<TipCommand>();
-        builder.Services.AddTransient<YouTubeCommand>();
-
-        var app = builder.Build();
-        return app;
-    }
-
     public static async Task<int> Main(string[] args)
     {
         Console.OutputEncoding = System.Text.Encoding.UTF8;
 
-        using var host = BuildApplicationAsync(args);
-        await host.StartAsync().ConfigureAwait(false);
+        string version = typeof(Program).Assembly.GetName().Version?.ToString() ?? "1.0.0";
 
-        // Get PostHog service for tracking
-        var posthog = host.Services.GetRequiredService<PostHogService>();
-
-        // Check for interactive mode
-        if (args.Length > 0 && (args[0] == "-i" || args[0] == "--interactive"))
+        NuruAppOptions options = new()
         {
-            posthog.TrackInteractiveMode(started: true);
-            var result = await InteractiveMode.RunAsync(host.Services);
-            posthog.TrackInteractiveMode(started: false);
-            return result;
-        }
-
-        // Check for version flag to add update notification
-        if (args.Length > 0 && (args[0] == "-v" || args[0] == "--version" || args[0] == "version"))
-        {
-            posthog.TrackCommand("version");
-            var currentVersion = typeof(Program).Assembly.GetName().Version?.ToString() ?? "1.0.0";
-            AnsiConsole.WriteLine(currentVersion);
-
-            // Check for updates on NuGet
-            try
+            ConfigureRepl = repl =>
             {
-                using var httpClient = new System.Net.Http.HttpClient { Timeout = System.TimeSpan.FromSeconds(3) };
-                var response = await httpClient.GetStringAsync("https://api.nuget.org/v3-flatcontainer/ardalis/index.json");
-                var versionData = System.Text.Json.JsonSerializer.Deserialize<NuGetVersionData>(response);
+                repl.Prompt = "ardalis> ";
+                repl.PromptColor = "\x1b[36m"; // Cyan
+                repl.WelcomeMessage =
+                    "Welcome to Ardalis CLI Interactive Mode!\n" +
+                    "Type 'help' for available commands, or 'exit' to quit.";
+                repl.GoodbyeMessage = "Thanks for using Ardalis CLI!";
+            }
+        };
 
-                if (versionData?.Versions != null && versionData.Versions.Length > 0)
+        NuruCoreApp app = NuruApp.CreateBuilder(args, options)
+            .ConfigureServices(services =>
+            {
+                services.AddSingleton<PostHogService>();
+                services.AddMediator();
+            })
+            .WithMetadata(
+                description: "Ardalis CLI - Tools and links from Steve 'Ardalis' Smith"
+            )
+
+            // ========================================
+            // URL Commands (open in browser)
+            // ========================================
+            .Map("blog", () => Open(Blog), "Open Ardalis's blog")
+            .Map("bluesky", () => Open(BlueSky), "Open Ardalis's Bluesky profile")
+            .Map("contact", () => Open(Contact), "Open Ardalis's contact page")
+            .Map("dometrain", () => Open(Dometrain), "Open Ardalis's Dometrain Author profile")
+            .Map("github", () => Open(GitHub), "Open Ardalis's GitHub profile")
+            .Map("linkedin", () => Open(LinkedIn), "Open Ardalis's LinkedIn profile")
+            .Map("nimblepros", () => Open(NimblePros), "Open NimblePros website")
+            .Map("nuget", () => Open(NuGet), "Open Ardalis's NuGet profile")
+            .Map("pluralsight", () => Open(Pluralsight), "Open Ardalis's Pluralsight profile")
+            .Map("speaker", () => Open(Speaker), "Open Ardalis's Sessionize speaker profile")
+            .Map("subscribe", () => Open(Subscribe), "Open Ardalis's newsletter subscription page")
+            .Map("youtube", () => Open(YouTube), "Open Ardalis's YouTube channel")
+
+            // ========================================
+            // Display Commands (show content in terminal)
+            // ========================================
+            .Map("card", CardHandler.Execute, "Display Ardalis's business card")
+            .Map("quote", async () => await QuoteHandler.ExecuteAsync(), "Display a random Ardalis quote")
+            .Map("tip", async () => await TipHandler.ExecuteAsync(), "Display a random coding tip")
+            .Map("repos", async () => await ReposHandler.ExecuteAsync(), "Display popular Ardalis GitHub repositories")
+
+            // ========================================
+            // Commands with Options
+            // ========================================
+            .Map(
+                "packages --all? --page-size? {size:int?}",
+                async (bool all, int? size) => await PackagesHandler.ExecuteAsync(all, size ?? 10),
+                "Display popular Ardalis NuGet packages"
+            )
+            .Map(
+                "books --no-paging? --page-size? {size:int?}",
+                async (bool noPaging, int? size) => await BooksHandler.ExecuteAsync(noPaging, size ?? 10),
+                "Display published books by Ardalis"
+            )
+            .Map(
+                "courses --all? --page-size? {size:int?}",
+                async (bool all, int? size) => await CoursesHandler.ExecuteAsync(all, size ?? 10),
+                "Display available courses"
+            )
+            .Map(
+                "recent --verbose?",
+                async (bool verbose) => await RecentHandler.ExecuteAsync(verbose),
+                "Display recent activity from Ardalis"
+            )
+
+            // ========================================
+            // Commands with Arguments
+            // ========================================
+            .Map(
+                "dotnetconf-score {year:int?}",
+                async (int? year) => await DotNetConfScoreHandler.ExecuteAsync(year ?? DateTime.Now.Year),
+                "Display top videos from .NET Conf playlists"
+            )
+
+            // ========================================
+            // Version Command
+            // ========================================
+            .Map("version", async () =>
+            {
+                ITerminal terminal = NuruTerminal.Default;
+                terminal.WriteLine(version);
+
+                // Check for updates on NuGet
+                try
                 {
-                    var latestVersion = versionData.Versions[^1]; // Get last version (latest)
+                    using var httpClient = new HttpClient { Timeout = TimeSpan.FromSeconds(3) };
+                    string response = await httpClient.GetStringAsync("https://api.nuget.org/v3-flatcontainer/ardalis/index.json");
+                    var versionData = System.Text.Json.JsonSerializer.Deserialize<NuGetVersionData>(response);
 
-                    // Parse versions for comparison
-                    var current = System.Version.Parse(currentVersion);
-                    var latest = System.Version.Parse(latestVersion);
+                    if (versionData?.Versions != null && versionData.Versions.Length > 0)
+                    {
+                        string latestVersion = versionData.Versions[^1];
 
-                    AnsiConsole.WriteLine();
-                    if (latest > current)
-                    {
-                        AnsiConsole.MarkupLine($"[yellow]v{latestVersion} is available; upgrade with:[/]");
-                        AnsiConsole.MarkupLine($"[cyan]dotnet tool update -g ardalis[/]");
-                    }
-                    else
-                    {
-                        AnsiConsole.MarkupLine("[green]You are on the latest version.[/]");
+                        var current = Version.Parse(version);
+                        var latest = Version.Parse(latestVersion);
+
+                        terminal.WriteLine();
+                        if (latest > current)
+                        {
+                            terminal.WriteLine($"v{latestVersion} is available; upgrade with:".Yellow());
+                            terminal.WriteLine("dotnet tool update -g ardalis".Cyan());
+                        }
+                        else
+                        {
+                            terminal.WriteLine("You are on the latest version.".Green());
+                        }
                     }
                 }
-            }
-            catch (Exception ex)
+                catch (Exception ex)
+                {
+                    terminal.WriteLine($"Unable to check for updates: {ex.Message}".Red());
+                }
+            }, "Display version and check for updates")
+
+            // ========================================
+            // Default Handler (no command provided)
+            // ========================================
+            .MapDefault(() =>
             {
-                // TODO: Use logging and telemetry to report errors
-                AnsiConsole.MarkupLine($"[red]Unable to check for updates: {ex.Message}[/]");
-            }
+                CardHandler.Execute();
+                return 0;
+            })
 
-            return 0;
+            .Build();
+
+        // Check for interactive mode flag
+        if (args.Length > 0 && (args[0] == "-i" || args[0] == "--interactive"))
+        {
+            // Note: PostHog tracking for REPL mode is handled by the pipeline behavior
+            return await app.RunReplAsync();
         }
 
-        // Check for help flag to add custom installation instructions
-        if (args.Length > 0 && (args[0] == "-h" || args[0] == "--help" || args[0] == "help"))
-        {
-            posthog.TrackCommand("help");
-            var helpApp = new CommandApp();
-            helpApp.Configure(config =>
-            {
-                config.SetApplicationName("ardalis");
-                config.SetApplicationVersion(typeof(Program).Assembly.GetName().Version?.ToString() ?? "1.0.0");
-
-                // Display commands (alphabetical)
-                config.AddCommand<BooksCommand>("books").WithDescription("Display published books by Ardalis.");
-                config.AddCommand<CardCommand>("card").WithDescription("Display Ardalis's business card.");
-                config.AddCommand<CoursesCommand>("courses").WithDescription("Display available courses.");
-                config.AddCommand<DotNetConfScoreCommand>("dotnetconf-score").WithDescription("Display top videos from .NET Conf playlists.");
-                config.AddCommand<PackagesCommand>("packages").WithDescription("Display popular Ardalis NuGet packages.");
-                config.AddCommand<QuoteCommand>("quote").WithDescription("Display a random Ardalis quote.");
-                config.AddCommand<RecentCommand>("recent").WithDescription("Display recent activity from Ardalis.");
-                config.AddCommand<ReposCommand>("repos").WithDescription("Display popular Ardalis GitHub repositories.");
-                config.AddCommand<TipCommand>("tip").WithDescription("Display a random coding tip.");
-
-                // Open commands (alphabetical)
-                config.AddCommand<BlogCommand>("blog").WithDescription("Open Ardalis's blog.");
-                config.AddCommand<BlueSkyCommand>("bluesky").WithDescription("Open Ardalis's Bluesky profile.");
-                config.AddCommand<ContactCommand>("contact").WithDescription("Open Ardalis's contact page.");
-                config.AddCommand<DometrainCommand>("dometrain").WithDescription("Open Ardalis's Dometrain Author profile.");
-                config.AddCommand<LinkedInCommand>("linkedin").WithDescription("Open Ardalis's LinkedIn profile.");
-                config.AddCommand<PluralsightCommand>("pluralsight").WithDescription("Open Ardalis's Pluralsight profile.");
-                config.AddCommand<NimbleProCommand>("nimblepros").WithDescription("Open NimblePros website.");
-                config.AddCommand<SpeakerCommand>("speaker").WithDescription("Open Ardalis's Sessionize speaker profile.");
-                config.AddCommand<SubscribeCommand>("subscribe").WithDescription("Open Ardalis's newsletter subscription page.");
-                config.AddCommand<YouTubeCommand>("youtube").WithDescription("Open Ardalis's YouTube channel.");
-
-                config.AddExample("card");
-                config.AddExample("blog");
-                config.AddExample("-i");
-            });
-
-            var result = helpApp.Run(args);
-
-            // Add installation instructions after the help output
-            AnsiConsole.WriteLine();
-            AnsiConsole.MarkupLine("[bold]INSTALLATION:[/]");
-            AnsiConsole.MarkupLine("  Install as a global .NET tool:");
-            AnsiConsole.MarkupLine("    [cyan]dotnet tool install -g ardalis[/]");
-            AnsiConsole.WriteLine();
-            AnsiConsole.MarkupLine("  Update to the latest version:");
-            AnsiConsole.MarkupLine("    [cyan]dotnet tool update -g ardalis[/]");
-            AnsiConsole.WriteLine();
-            AnsiConsole.MarkupLine("  [dim]Once installed, use 'ardalis' instead of 'dnx ardalis'[/]");
-
-            return result;
-        }
-
-        // Create CommandApp with DI support
-        var app = new CommandApp(new TypeRegistrar(host.Services));
-
-        app.Configure(config =>
-        {
-            config.SetApplicationName("ardalis");
-            config.SetApplicationVersion(typeof(Program).Assembly.GetName().Version?.ToString() ?? "1.0.0");
-
-            // Display commands (alphabetical)
-            config.AddCommand<BooksCommand>("books")
-                .WithDescription("Display published books by Ardalis.");
-
-            config.AddCommand<CardCommand>("card")
-                .WithDescription("Display Ardalis's business card.");
-
-            config.AddCommand<CoursesCommand>("courses")
-                .WithDescription("Display available courses.");
-
-            config.AddCommand<DotNetConfScoreCommand>("dotnetconf-score")
-                .WithDescription("Display top videos from .NET Conf playlists.");
-
-            config.AddCommand<PackagesCommand>("packages")
-                .WithDescription("Display popular Ardalis NuGet packages.");
-
-            config.AddCommand<QuoteCommand>("quote")
-                .WithDescription("Display a random Ardalis quote.");
-
-            config.AddCommand<RecentCommand>("recent")
-                .WithDescription("Display recent activity from Ardalis.");
-
-            config.AddCommand<ReposCommand>("repos")
-                .WithDescription("Display popular Ardalis GitHub repositories.");
-
-            config.AddCommand<TipCommand>("tip")
-                .WithDescription("Display a random coding tip.");
-
-            // Open commands (alphabetical)
-            config.AddCommand<BlogCommand>("blog")
-                .WithDescription("Open Ardalis's blog.");
-
-            config.AddCommand<BlueSkyCommand>("bluesky")
-                .WithDescription("Open Ardalis's Bluesky profile.");
-
-            config.AddCommand<ContactCommand>("contact")
-                .WithDescription("Open Ardalis's contact page.");
-
-            config.AddCommand<DometrainCommand>("dometrain")
-                .WithDescription("Open Ardalis's Dometrain Author profile.");
-
-            config.AddCommand<LinkedInCommand>("linkedin")
-                .WithDescription("Open Ardalis's LinkedIn profile.");
-
-            config.AddCommand<PluralsightCommand>("pluralsight")
-                .WithDescription("Open Ardalis's Pluralsight profile.");
-            config.AddCommand<NimbleProCommand>("nimblepros")
-                .WithDescription("Open NimblePros website.");
-
-            config.AddCommand<SpeakerCommand>("speaker")
-                .WithDescription("Open Ardalis's Sessionize speaker profile.");
-
-            config.AddCommand<SubscribeCommand>("subscribe")
-                .WithDescription("Open Ardalis's newsletter subscription page.");
-
-            config.AddCommand<YouTubeCommand>("youtube")
-                .WithDescription("Open Ardalis's YouTube channel.");
-
-            config.AddExample("card");
-            config.AddExample("blog");
-            config.AddExample("-i");
-        });
-
-        // Filter out debug flags before passing to Spectre.Console
-        var filteredArgs = args.Where(a => a != "--debug" && a != "-d").ToArray();
-
-        // Track when no command is provided (shows help)
-        if (filteredArgs.Length == 0)
-        {
-            posthog.TrackCommand("(none)");
-        }
-
-        var exitCode = await app.RunAsync(filteredArgs);
-
-        // Give PostHog a moment to flush events in background
-        // The Dispose() starts the flush asynchronously, this delay allows it to complete
-        await Task.Delay(200);
-
-        return exitCode;
+        return await app.RunAsync(args);
     }
 }
