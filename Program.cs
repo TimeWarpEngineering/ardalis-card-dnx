@@ -95,7 +95,7 @@ public class Program
             .Map("card", CardHandler.Execute, "Display Ardalis's business card")
             .Map("quote", async () => await QuoteHandler.ExecuteAsync(), "Display a random Ardalis quote")
             .Map("tip", async () => await TipHandler.ExecuteAsync(), "Display a random coding tip")
-            .Map("repos", async () => await ReposHandler.ExecuteAsync(), "Display popular Ardalis GitHub repositories")
+            .Map<ReposCommand>("repos", "Display popular Ardalis GitHub repositories")
 
             // ========================================
             // Commands with Options
