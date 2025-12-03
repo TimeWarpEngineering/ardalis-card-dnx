@@ -104,9 +104,8 @@ public class Program
                 "packages --all? --page-size? {size:int?}",
                 "Display popular Ardalis NuGet packages"
             )
-            .Map(
+            .Map<BooksCommand>(
                 "books --no-paging? --page-size? {size:int?}",
-                async (bool noPaging, int? size) => await BooksHandler.ExecuteAsync(noPaging, size ?? 10),
                 "Display published books by Ardalis"
             )
             .Map(

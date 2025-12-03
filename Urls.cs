@@ -7,6 +7,7 @@ public static class Urls
 {
     public const string Blog = "https://ardalis.com";
     public const string BlueSky = "https://bsky.app/profile/ardalis.com";
+    public const string Books = "https://ardalis.com/books";
     public const string Contact = "https://ardalis.com/contact/";
     public const string Dometrain = "https://dometrain.com/author/steve-ardalis-smith/";
     public const string GitHub = "https://github.com/ardalis";
