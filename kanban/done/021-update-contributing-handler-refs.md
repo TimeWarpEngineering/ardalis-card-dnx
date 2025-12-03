@@ -6,10 +6,14 @@ Update "Used by" references in CONTRIBUTING.md from deleted Command classes to c
 
 ## Todo List
 
-- [ ] Change `QuoteCommand` to `QuoteHandler` (line 85)
-- [ ] Change `BooksCommand` to `BooksHandler` (line 110)
-- [ ] Change `TipsCommand` to `TipHandler` (line 133)
-- [ ] Change `CoursesCommand` to `CoursesHandler` (line 161)
+- [x] Change `QuoteCommand` to `QuoteHandler` (line 85)
+- [x] Change `BooksCommand` to `BooksHandler` (line 110)
+- [x] Change `TipsCommand` to `TipHandler` (line 133)
+- [x] Change `CoursesCommand` to `CoursesHandler` (line 161)
+
+## Results
+
+All four "Used by" references updated from Command classes to Handler classes.
 
 ## Notes
 
