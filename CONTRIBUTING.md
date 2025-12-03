@@ -82,7 +82,7 @@ The tool uses external JSON files hosted on ardalis.com for dynamic content:
   ```
 
 - **Fallback**: If the URL is unavailable, the tool uses a hardcoded fallback quote: "New is glue."
-- **Used by**: `QuoteCommand` via `QuoteHelper`
+- **Used by**: `QuoteHandler` via `QuoteHelper`
 
 #### Books (`books.json`)
 
@@ -107,7 +107,7 @@ The tool uses external JSON files hosted on ardalis.com for dynamic content:
 - **Required Fields**: `title`, `link`
 - **Optional Fields**: `coverImage`, `description`, `publisher`, `publicationDate`, `isbn`
 - **Fallback**: If the URL is unavailable, the tool uses a hardcoded fallback with the ASP.NET Core architecture eBook
-- **Used by**: `BooksCommand`
+- **Used by**: `BooksHandler`
 
 #### Tips (`tips.json`)
 
@@ -130,7 +130,7 @@ The tool uses external JSON files hosted on ardalis.com for dynamic content:
 
 - **Required Fields**: `tipText`, `referenceLink`
 - **Fallback**: If the URL is unavailable, the tool uses a hardcoded fallback tip about including units in time variables
-- **Used by**: `TipsCommand` via `TipHelper`
+- **Used by**: `TipHandler` via `TipHelper`
 
 #### Courses (`courses.json`)
 
@@ -158,6 +158,6 @@ The tool uses external JSON files hosted on ardalis.com for dynamic content:
 - **Required Fields**: `name`, `link`
 - **Optional Fields**: `platform`, `description`
 - **Fallback**: If the URL is unavailable, the tool uses hardcoded fallback courses including SOLID Principles and Clean Architecture
-- **Used by**: `CoursesCommand`
+- **Used by**: `CoursesHandler`
 
 **Note**: To update the quotes, books, tips, or courses displayed by the tool, modify the JSON files hosted at the URLs above. The tool will automatically fetch the latest content on each run.

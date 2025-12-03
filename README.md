@@ -69,6 +69,18 @@ Open Ardalis's Pluralsight profile:
 dnx ardalis pluralsight
 ```
 
+Open Ardalis's GitHub profile:
+
+```bash
+dnx ardalis github
+```
+
+Open Ardalis's NuGet profile:
+
+```bash
+dnx ardalis nuget
+```
+
 Open Ardalis's newsletter subscription page:
 
 ```bash
@@ -99,8 +111,6 @@ Display published books:
 
 ```bash
 dnx ardalis books
-# Display book cover images
-dnx ardalis books --with-covers
 # Disable paging (show all books at once)
 dnx ardalis books --no-paging
 # Set page size (default: 10)
@@ -251,12 +261,13 @@ ardalis youtube    # Open YouTube channel
 ardalis bluesky    # Open Bluesky profile
 ardalis linkedin   # Open LinkedIn profile
 ardalis pluralsight # Open Pluralsight profile
+ardalis github     # Open GitHub profile
+ardalis nuget      # Open NuGet profile
 ardalis quote      # Display random quote
 ardalis tip        # Display random coding tip
 ardalis repos      # Display popular GitHub repositories
 ardalis packages   # Display popular NuGet packages
 ardalis books      # Display published books
-ardalis books --with-covers  # Display published books with cover images
 ardalis courses    # Display available courses
 ardalis courses --no-paging  # Display all courses at once
 ardalis recent     # Display recent activity
@@ -285,7 +296,7 @@ dotnet tool uninstall -g ardalis
 ## Features
 
 - ⚡ **One-command execution** with the new `dnx` command—no installation needed!
-- 🎨 Beautiful terminal UI with [Spectre.Console](https://spectreconsole.net/)
+- 🎨 Beautiful terminal UI with [TimeWarp.Nuru](https://github.com/TimeWarpEngineering/timewarp-nuru)
 - 💼 Quick access to professional links
 - 🌐 Cross-platform (Windows, macOS, Linux)
 - 🚀 Built with .NET 10.0
