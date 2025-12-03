@@ -100,9 +100,8 @@ public class Program
             // ========================================
             // Commands with Options
             // ========================================
-            .Map(
+            .Map<PackagesCommand>(
                 "packages --all? --page-size? {size:int?}",
-                async (bool all, int? size) => await PackagesHandler.ExecuteAsync(all, size ?? 10),
                 "Display popular Ardalis NuGet packages"
             )
             .Map(
