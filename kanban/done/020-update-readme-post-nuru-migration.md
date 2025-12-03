@@ -6,9 +6,16 @@ Remove outdated Spectre.Console references and deleted `--with-covers` option fr
 
 ## Todo List
 
-- [ ] Remove `--with-covers` option from books command example (line 103)
-- [ ] Remove `--with-covers` from permanent installation examples (line 259)
-- [ ] Replace Spectre.Console reference with TimeWarp.Nuru in Features section (line 288)
+- [x] Remove `--with-covers` option from books command example (line 103)
+- [x] Remove `--with-covers` from permanent installation examples (line 259)
+- [x] Replace Spectre.Console reference with TimeWarp.Nuru in Features section (line 288)
+
+## Results
+
+All three changes completed:
+1. Removed `--with-covers` example from Quick Start books section
+2. Removed `--with-covers` line from Permanent Installation examples
+3. Updated Features section to reference TimeWarp.Nuru instead of Spectre.Console
 
 ## Notes
 
