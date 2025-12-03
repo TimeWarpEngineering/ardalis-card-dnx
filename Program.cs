@@ -36,6 +36,38 @@ public class Program
             {
                 services.AddSingleton<PostHogService>();
                 services.AddMediator();
+
+                // Named HTTP clients for DI
+                services.AddHttpClient("GitHub", client =>
+                {
+                    client.BaseAddress = new Uri("https://api.github.com/");
+                    client.DefaultRequestHeaders.Add("User-Agent", "ardalis-cli");
+                    client.Timeout = TimeSpan.FromSeconds(10);
+                });
+
+                services.AddHttpClient("NuGet", client =>
+                {
+                    client.BaseAddress = new Uri("https://api-v2v3search-0.nuget.org/");
+                    client.Timeout = TimeSpan.FromSeconds(10);
+                });
+
+                services.AddHttpClient("ArdalisApi", client =>
+                {
+                    client.BaseAddress = new Uri("https://api.ardalis.com/");
+                    client.DefaultRequestHeaders.Add("User-Agent", "ardalis-cli");
+                    client.Timeout = TimeSpan.FromSeconds(30);
+                });
+
+                services.AddHttpClient("ArdalisWeb", client =>
+                {
+                    client.DefaultRequestHeaders.Add("User-Agent", "ardalis-cli");
+                    client.Timeout = TimeSpan.FromSeconds(10);
+                });
+
+                services.AddHttpClient("RssFeed", client =>
+                {
+                    client.Timeout = TimeSpan.FromSeconds(10);
+                });
             })
             .WithMetadata(
                 description: "Ardalis CLI - Tools and links from Steve 'Ardalis' Smith"
@@ -63,38 +95,33 @@ public class Program
             .Map("card", CardHandler.Execute, "Display Ardalis's business card")
             .Map("quote", async () => await QuoteHandler.ExecuteAsync(), "Display a random Ardalis quote")
             .Map("tip", async () => await TipHandler.ExecuteAsync(), "Display a random coding tip")
-            .Map("repos", async () => await ReposHandler.ExecuteAsync(), "Display popular Ardalis GitHub repositories")
+            .Map<ReposCommand>("repos", "Display popular Ardalis GitHub repositories")
 
             // ========================================
             // Commands with Options
             // ========================================
-            .Map(
+            .Map<PackagesCommand>(
                 "packages --all? --page-size? {size:int?}",
-                async (bool all, int? size) => await PackagesHandler.ExecuteAsync(all, size ?? 10),
                 "Display popular Ardalis NuGet packages"
             )
-            .Map(
+            .Map<BooksCommand>(
                 "books --no-paging? --page-size? {size:int?}",
-                async (bool noPaging, int? size) => await BooksHandler.ExecuteAsync(noPaging, size ?? 10),
                 "Display published books by Ardalis"
             )
-            .Map(
+            .Map<CoursesCommand>(
                 "courses --all? --page-size? {size:int?}",
-                async (bool all, int? size) => await CoursesHandler.ExecuteAsync(all, size ?? 10),
                 "Display available courses"
             )
-            .Map(
+            .Map<RecentCommand>(
                 "recent --verbose?",
-                async (bool verbose) => await RecentHandler.ExecuteAsync(verbose),
                 "Display recent activity from Ardalis"
             )
 
             // ========================================
             // Commands with Arguments
             // ========================================
-            .Map(
+            .Map<DotNetConfScoreCommand>(
                 "dotnetconf-score {year:int?}",
-                async (int? year) => await DotNetConfScoreHandler.ExecuteAsync(year ?? DateTime.Now.Year),
                 "Display top videos from .NET Conf playlists"
             )
 
