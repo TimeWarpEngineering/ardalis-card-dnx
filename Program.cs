@@ -108,9 +108,8 @@ public class Program
                 "books --no-paging? --page-size? {size:int?}",
                 "Display published books by Ardalis"
             )
-            .Map(
+            .Map<CoursesCommand>(
                 "courses --all? --page-size? {size:int?}",
-                async (bool all, int? size) => await CoursesHandler.ExecuteAsync(all, size ?? 10),
                 "Display available courses"
             )
             .Map(

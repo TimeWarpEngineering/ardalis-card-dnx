@@ -9,6 +9,7 @@ public static class Urls
     public const string BlueSky = "https://bsky.app/profile/ardalis.com";
     public const string Books = "https://ardalis.com/books";
     public const string Contact = "https://ardalis.com/contact/";
+    public const string Courses = "https://ardalis.com/courses";
     public const string Dometrain = "https://dometrain.com/author/steve-ardalis-smith/";
     public const string GitHub = "https://github.com/ardalis";
     public const string LinkedIn = "https://www.linkedin.com/in/stevenandrewsmith/";
