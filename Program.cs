@@ -120,9 +120,8 @@ public class Program
             // ========================================
             // Commands with Arguments
             // ========================================
-            .Map(
+            .Map<DotNetConfScoreCommand>(
                 "dotnetconf-score {year:int?}",
-                async (int? year) => await DotNetConfScoreHandler.ExecuteAsync(year ?? DateTime.Now.Year),
                 "Display top videos from .NET Conf playlists"
             )
 
