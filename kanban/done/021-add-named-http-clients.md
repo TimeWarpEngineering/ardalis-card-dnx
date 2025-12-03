@@ -6,13 +6,13 @@ Add `IHttpClientFactory` with named HTTP clients to `Program.cs` ConfigureServic
 
 ## Todo List
 
-- [ ] Add `Microsoft.Extensions.Http` package reference if needed
-- [ ] Add named HTTP client "GitHub" (api.github.com, User-Agent, 10s timeout)
-- [ ] Add named HTTP client "NuGet" (api-v2v3search-0.nuget.org, 10s timeout)
-- [ ] Add named HTTP client "ArdalisApi" (api.ardalis.com, User-Agent, 30s timeout)
-- [ ] Add named HTTP client "ArdalisWeb" (User-Agent, 10s timeout)
-- [ ] Add named HTTP client "RssFeed" (10s timeout)
-- [ ] Verify build succeeds
+- [x] Add `Microsoft.Extensions.Http` package reference if needed
+- [x] Add named HTTP client "GitHub" (api.github.com, User-Agent, 10s timeout)
+- [x] Add named HTTP client "NuGet" (api-v2v3search-0.nuget.org, 10s timeout)
+- [x] Add named HTTP client "ArdalisApi" (api.ardalis.com, User-Agent, 30s timeout)
+- [x] Add named HTTP client "ArdalisWeb" (User-Agent, 10s timeout)
+- [x] Add named HTTP client "RssFeed" (10s timeout)
+- [x] Verify build succeeds
 
 ## Notes
 

@@ -36,6 +36,38 @@ public class Program
             {
                 services.AddSingleton<PostHogService>();
                 services.AddMediator();
+
+                // Named HTTP clients for DI
+                services.AddHttpClient("GitHub", client =>
+                {
+                    client.BaseAddress = new Uri("https://api.github.com/");
+                    client.DefaultRequestHeaders.Add("User-Agent", "ardalis-cli");
+                    client.Timeout = TimeSpan.FromSeconds(10);
+                });
+
+                services.AddHttpClient("NuGet", client =>
+                {
+                    client.BaseAddress = new Uri("https://api-v2v3search-0.nuget.org/");
+                    client.Timeout = TimeSpan.FromSeconds(10);
+                });
+
+                services.AddHttpClient("ArdalisApi", client =>
+                {
+                    client.BaseAddress = new Uri("https://api.ardalis.com/");
+                    client.DefaultRequestHeaders.Add("User-Agent", "ardalis-cli");
+                    client.Timeout = TimeSpan.FromSeconds(30);
+                });
+
+                services.AddHttpClient("ArdalisWeb", client =>
+                {
+                    client.DefaultRequestHeaders.Add("User-Agent", "ardalis-cli");
+                    client.Timeout = TimeSpan.FromSeconds(10);
+                });
+
+                services.AddHttpClient("RssFeed", client =>
+                {
+                    client.Timeout = TimeSpan.FromSeconds(10);
+                });
             })
             .WithMetadata(
                 description: "Ardalis CLI - Tools and links from Steve 'Ardalis' Smith"
