@@ -171,7 +171,6 @@ public class Program
             .MapDefault(() =>
             {
                 CardHandler.Execute();
-                return 0;
             })
 
             .Build();
